@@ -13,10 +13,8 @@ def get_image_hash(image_path, hash_size=8):
     """
     try:
         with Image.open(image_path) as img:
-            # Convert to RGB if necessary
             if img.mode != "RGB":
                 img = img.convert("RGB")
-            # Calculate average hash (perceptual hash)
             return imagehash.average_hash(img, hash_size=hash_size)
     except Exception as e:
         print(f"Error processing {image_path}: {e}")
@@ -44,7 +42,6 @@ def find_duplicate_images(folder_path, similarity_threshold=5):
     # Supported image extensions
     image_extensions = {".jpg", ".jpeg", ".png", ".bmp", ".gif", ".tiff", ".webp"}
 
-    # Find all image files
     image_files = []
     for root, dirs, files in os.walk(folder_path):
         for file in files:
@@ -53,7 +50,6 @@ def find_duplicate_images(folder_path, similarity_threshold=5):
 
     print(f"Found {len(image_files)} image files to process...")
 
-    # Calculate hashes for all images
     file_hashes = {}
     for i, image_path in enumerate(image_files, 1):
         if i % 10 == 0:
@@ -64,7 +60,6 @@ def find_duplicate_images(folder_path, similarity_threshold=5):
 
     print(f"Successfully processed {len(file_hashes)} images.")
 
-    # Find duplicates based on similarity
     duplicates = defaultdict(list)
     processed = set()
 
@@ -81,7 +76,6 @@ def find_duplicate_images(folder_path, similarity_threshold=5):
             distance = hamming_distance(hash1, hash2)
 
             if distance <= similarity_threshold:
-                # file2 is a duplicate of file1
                 duplicates[file1].append((file2, distance))
                 processed.add(file2)
 
@@ -138,7 +132,6 @@ def delete_duplicates(duplicates, interactive=True):
             print("Deletion cancelled.")
             return
 
-    # Delete the duplicate files
     deleted_count = 0
     total_size_freed = 0
 
@@ -205,12 +198,11 @@ def main():
     print(f"Mode: {'Automatic' if not interactive else 'Interactive'}")
     print("=" * 80)
 
-    # Find duplicates
     duplicates = find_duplicate_images(folder_path, similarity_threshold)
 
-    # Delete duplicates
     delete_duplicates(duplicates, interactive)
 
 
 if __name__ == "__main__":
     main()
+
